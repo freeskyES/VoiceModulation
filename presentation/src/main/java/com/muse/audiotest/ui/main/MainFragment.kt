@@ -94,13 +94,14 @@ class MainFragment : Fragment() {
         recorder.stop()
         recorder.release()
 
-        playAudio()
+        playAudio(1.0f)
     }
 
-    private fun playAudio() {
+    private fun playAudio(speed: Float) {
         MediaPlayer().apply {
             Log.i("TEST","${viewModel.filePath}")
             setDataSource(viewModel.filePath)
+            playbackParams = this.playbackParams.setSpeed(speed)
             prepare()
             start()
         }
