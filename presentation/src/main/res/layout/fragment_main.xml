@@ -13,30 +13,58 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/black"
         tools:context=".ui.main.MainFragment">
 
-        <ImageView
-            android:id="@+id/record_button"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:background="@{viewmodel.isRecording()? @drawable/ic_baseline_pause_circle_filled_24: @drawable/ic_baseline_keyboard_voice_24}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.258"
+        <SurfaceView
+            android:id="@+id/wave"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="100dp"
+            android:layout_marginBottom="100dp"
             />
 
-        <Button
-            android:id="@+id/button"
-            android:text="Audio"
-            app:layout_constraintBottom_toBottomOf="parent"
+    <!--    <ImageView
+            android:id="@+id/display"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/image_1"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_width="100dp"
-            android:layout_height="100dp" />
+            app:layout_constraintTop_toTopOf="parent"/>-->
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/record_button"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="@{viewmodel.isRecording()? @drawable/ic_baseline_pause_circle_filled_24: @drawable/ic_baseline_keyboard_voice_24}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@+id/button"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <Button
+                android:id="@+id/button"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="@null"
+                android:foreground="@drawable/cat"
+                android:text="Audio"
+                app:layout_constraintLeft_toRightOf="@id/record_button"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

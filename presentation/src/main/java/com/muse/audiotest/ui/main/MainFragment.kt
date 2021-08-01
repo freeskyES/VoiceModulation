@@ -11,8 +11,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
-import com.muse.audiotest.R
 import com.muse.audiotest.databinding.FragmentMainBinding
+import me.bogerchan.niervisualizer.NierVisualizerManager
+import me.bogerchan.niervisualizer.renderer.circle.CircleBarRenderer
+import me.bogerchan.niervisualizer.renderer.circle.CircleRenderer
+import me.bogerchan.niervisualizer.renderer.columnar.ColumnarType4Renderer
 
 class MainFragment : Fragment() {
 
@@ -27,6 +30,7 @@ class MainFragment : Fragment() {
     )
 
     private lateinit var recorder: MediaRecorder
+    private var visualizerManager: NierVisualizerManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +55,14 @@ class MainFragment : Fragment() {
         setupSoundPool()
         requestAudioPermission()
         setupEvents()
+        setupSurfaceView()
+    }
+
+    private fun setupSurfaceView() {
+        viewDataBinding.wave.apply {
+            setZOrderOnTop(true)
+//            holder.setFormat(PixelFormat.TRANSLUCENT)
+        }
     }
 
     private fun setupLifecycleOwner() {
@@ -88,12 +100,12 @@ class MainFragment : Fragment() {
     private fun startRecording() {
         setupRecord()
         recorder.start()
+        stopVisualizer()
     }
 
     private fun stopAudio() {
         recorder.stop()
         recorder.release()
-
         playAudio(1.0f)
     }
 
@@ -101,10 +113,38 @@ class MainFragment : Fragment() {
         MediaPlayer().apply {
             Log.i("TEST","${viewModel.filePath}")
             setDataSource(viewModel.filePath)
-            playbackParams = this.playbackParams.setSpeed(speed)
+            playbackParams = this.playbackParams.apply {
+                setSpeed(speed)
+                pitch = 2.5f
+            }
+            this.playbackParams.pitch
             prepare()
             start()
+        }.run {
+            this.audioSessionId
+        }.run {
+            if (this != -1) {
+                initVisualizer(this)
+                startVisualizer()
+            }
         }
+    }
+
+    private fun initVisualizer(audioSessionId: Int) {
+        Log.i("initVisualizer", "$audioSessionId")
+        // need a param of audioSession, 0 is output mix, AudioRecord user please see 3.3.7
+
+        visualizerManager?.release()
+        visualizerManager = NierVisualizerManager().apply {
+            init(audioSessionId)
+        }
+    }
+
+    private fun startVisualizer(){
+        visualizerManager?.start(viewDataBinding.wave, arrayOf(CircleRenderer(true), CircleBarRenderer(), ColumnarType4Renderer()))
+    }
+    private fun stopVisualizer() {
+        visualizerManager?.stop()
     }
 
     private fun requestAudioPermission() {
@@ -137,7 +177,6 @@ class MainFragment : Fragment() {
             soundpool = SoundPool.Builder()
                 .setAudioAttributes(attributes)
                 .build()
-
 //            val sound = soundpool.load(this, R.raw.voice_test, 1)
             val sound = soundpool.load(viewModel.filePath, 1)
             viewDataBinding.button.setOnClickListener {
