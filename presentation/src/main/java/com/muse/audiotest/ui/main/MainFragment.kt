@@ -16,6 +16,7 @@ import me.bogerchan.niervisualizer.NierVisualizerManager
 import me.bogerchan.niervisualizer.renderer.circle.CircleBarRenderer
 import me.bogerchan.niervisualizer.renderer.circle.CircleRenderer
 import me.bogerchan.niervisualizer.renderer.columnar.ColumnarType4Renderer
+import java.lang.Exception
 
 class MainFragment : Fragment() {
 
@@ -107,6 +108,25 @@ class MainFragment : Fragment() {
         recorder.stop()
         recorder.release()
         playAudio(1.0f)
+    }
+
+    private fun playAudioForUrl(speed: Float) {
+        val mediaPlayer = MediaPlayer()
+        val audioUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC)
+        try {
+            mediaPlayer.setDataSource(audioUrl)
+            mediaPlayer.playbackParams = mediaPlayer.playbackParams.apply {
+                setSpeed(speed)
+                pitch = 2.5f
+            }
+            mediaPlayer.playbackParams.pitch
+            mediaPlayer.prepare()
+            mediaPlayer.start()
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private fun playAudio(speed: Float) {
